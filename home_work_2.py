@@ -11,15 +11,13 @@ def scrape_books(url):
 
     for book in soup.find_all('article', class_='product_pod'):
         title = book.h3.a['title']
-        price = float(book.find('p', class_='price_color').text.replace('Â', '').replace('£', ''))
-        stock_elem = book.find('p', class_='instock availability')
+        price_text = book.find('p', class_='price_color').text.strip().replace('£', '').replace('Â', '')
+        price = float(price_text)
 
-        try:
-            stock = int(stock_elem.text.strip().split()[2])
-        except (AttributeError, IndexError):
-            stock = 0
+        stock = "в наличии"
 
-        description = book.p.get('title', '')  # используем метод get для безопасного получения атрибута title
+        description_elem = book.find('p', class_='excerpt')
+        description = description_elem.text.strip() if description_elem else ''
 
         books.append({
             'title': title,
